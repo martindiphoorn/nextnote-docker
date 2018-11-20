@@ -1,0 +1,37 @@
+version: '3.3'
+services:
+  db:
+    image: mariadb:10
+    environment:
+    - TZ=Europe/Amsterdam
+    - MYSQL_DATABASE=notes
+    - MYSQL_ROOT_PASSWORD=n0t3s
+    ports:
+    - "8306:3306"
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ./Dockerfile
+    environment:
+    - TZ=Europe/Amsterdam
+    - dbHost=db
+    - dbPort=3306
+    - dbName=notes
+    - dbUsername=root
+    - dbPassword=n0t3s
+    ports:
+    - "8090:8080"
+    depends_on:
+    - db
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ./Dockerfile
+    environment:
+    - TZ=Europe/Amsterdam
+    ports:
+    - "8080:80"
+    depends_on:
+    - backend
